@@ -1,11 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from config.settings import get_settings
 
-
-URL_DATABASE = "postgresql://postgres:C4rp1nt3r012*@localhost:5432/locatel"
-
-engine = create_engine(URL_DATABASE)
+settings = get_settings()
+engine = create_engine(settings.DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
