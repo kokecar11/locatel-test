@@ -34,3 +34,5 @@ node_modules/
 
 # Ignorar variables de entorno virtual
 /venv
+
+**/__pycache__/
