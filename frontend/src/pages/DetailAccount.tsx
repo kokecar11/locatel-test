@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
+import useGlobalContext from "@/context/useGlobalContext"
+
 import CardAccount from "../components/account/CardAccount"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { CreateTransactionForm } from "../components/transactions/CreateTransaction"
 import { DataTable } from "../components/transactions/DataTable"
-import { Transaction, columns } from "../components/transactions/Columns"
+import { columns } from "../components/transactions/Columns"
 import { Button } from "@/components/ui/button"
 
 export function DetailAccount() {
+  const { transactions, setTransactions, account, setAccount } =
+    useGlobalContext()
   const { accountNumber } = useParams<{ accountNumber: string }>()
-  const [account, setAccount] = useState<{
-    balance: number
-    accountNumber: string
-  }>({
-    balance: 0,
-    accountNumber: "0000000000",
-  })
-  const [transactions, setTransactions] = useState<Transaction[]>([])
+
   useEffect(() => {
     const fetchAccount = async () => {
       try {
@@ -31,6 +28,7 @@ export function DetailAccount() {
         )
         const data = await response.json()
         setAccount({
+          id: data.id,
           balance: data.balance,
           accountNumber: data.account_number,
         })
@@ -59,7 +57,7 @@ export function DetailAccount() {
 
     fetchAccount()
     fetchTransactions()
-  }, [accountNumber, account.balance])
+  }, [accountNumber, setTransactions, setAccount])
 
   return (
     <div className="h-screen w-full container">

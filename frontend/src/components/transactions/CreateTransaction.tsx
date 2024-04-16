@@ -1,3 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import useGlobalContext from "@/context/useGlobalContext"
+
 import { Minus, Plus } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -20,9 +25,6 @@ import {
 } from "../ui/form"
 import { Input } from "../ui/input"
 import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { useToast } from "../ui/use-toast"
 
 const formSchema = z.object({
@@ -38,6 +40,7 @@ export function CreateTransactionForm({
   accountNumber,
   type,
 }: CreateTransactionFormProps) {
+  const { setTransactions, setAccount } = useGlobalContext()
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
@@ -47,6 +50,39 @@ export function CreateTransactionForm({
       amount: 0,
     },
   })
+
+  const fetchAccount = async () => {
+    const response = await fetch(
+      `http://localhost:8000/api/v1/accounts/${accountNumber}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          accept: "application/json",
+        },
+      }
+    )
+    const data = await response.json()
+    setAccount({
+      id: data.id,
+      balance: data.balance,
+      accountNumber: data.account_number,
+    })
+  }
+
+  const fetchTransactions = async () => {
+    const response = await fetch(
+      `http://localhost:8000/api/v1/transactions?account_number=${accountNumber}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          accept: "application/json",
+        },
+      }
+    )
+    const data = await response.json()
+    setTransactions(data)
+    fetchAccount()
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const dataAdapted = {
@@ -69,8 +105,17 @@ export function CreateTransactionForm({
           body: jsonData,
         }
       )
-      await response.json()
+      const data = await response.json()
+      const isOk = response.ok
+      if (!isOk) {
+        toast({
+          title: "Transacción fallida",
+          description: `Fondos insuficientes`,
+        })
+        throw new Error(data.detail)
+      }
       form.reset()
+      fetchTransactions()
       setOpen(false)
       toast({
         title: "Transacción exitosa",

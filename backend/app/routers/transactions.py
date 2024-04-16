@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import update, and_
+from sqlalchemy import update, and_, desc
 
 from dependencies import db_dependency, user_dependency
 from models.account import Transaction, Account
@@ -12,7 +12,7 @@ async def get_all_transactions_by_account(user:user_dependency, account_number: 
     account = db.query(Account).filter(and_(Account.account_number == str(account_number), Account.user == user.get('id'))).first()
     if not account:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
-    transactions = db.query(Transaction).filter(Transaction.account_id == account.id).all()
+    transactions = db.query(Transaction).filter(Transaction.account_id == account.id).order_by(desc(Transaction.created_at)).all()
     return [TransactionsList(
         id=transaction.id,
         amount=transaction.amount,
@@ -27,17 +27,17 @@ async def get_transaction_by_id(user: user_dependency, account_number: int, tran
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
     transantion = db.query(Transaction).filter(Transaction.account == account.id, Transaction.id == transaction_id).first()
     if not transantion:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
     return transantion
 
 @transactionsRouter.post("/transactions")
 async def create_transaction(user: user_dependency, transaction: TransactionCreateBase, db: db_dependency) -> TransactionsBase:
     account = db.query(Account).filter(and_(Account.account_number == str(transaction.account_number), Account.user == user.get('id'))).first()
     if not account:
-        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
     
     if transaction.type == "withdraw" and account.balance < transaction.amount:
-        return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient funds")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient funds")
     
     account.balance += transaction.amount if transaction.type == "deposit" else -transaction.amount
     db_transaction = Transaction(type=transaction.type, account_id=account.id, amount=transaction.amount)

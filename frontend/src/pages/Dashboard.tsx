@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import useGlobalContext from "@/context/useGlobalContext"
 import CardAccount from "@/components/account/CardAccount"
 import { CreateAccountForm } from "@/components/account/CreateAccountForm"
 
 export function Dashboard() {
-  const [accounts, setAccounts] = useState<
-    { id: number; balance: number; accountNumer: string }[]
-  >([])
-
+  const { accounts, setAccounts } = useGlobalContext()
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
@@ -25,7 +23,7 @@ export function Dashboard() {
           }) => ({
             id: account.id,
             balance: account.balance,
-            accountNumer: account.account_number,
+            accountNumber: account.account_number,
           })
         )
 
@@ -36,7 +34,7 @@ export function Dashboard() {
     }
 
     fetchAccounts()
-  }, [])
+  }, [setAccounts])
 
   return (
     <div className="h-screen w-full container">
@@ -49,8 +47,8 @@ export function Dashboard() {
       <div className="grid grid-cols-4 gap-4">
         {accounts.map((account) => (
           <CardAccount
-            key={account.accountNumer}
-            accountNumber={account.accountNumer}
+            key={account.accountNumber}
+            accountNumber={account.accountNumber}
             balance={account.balance}
           />
         ))}

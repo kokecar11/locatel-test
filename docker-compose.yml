@@ -1,0 +1,12 @@
+version: "3"
+services:
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: locatel*.
+      POSTGRES_DB: locatel
