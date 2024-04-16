@@ -10,7 +10,7 @@ from config.settings import get_settings
 
 settings = get_settings()
 
-print(settings.ALLOWED_HOSTS[0])
+
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 

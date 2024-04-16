@@ -4,8 +4,8 @@ from typing import List
 from sqlalchemy import and_
 
 from dependencies import db_dependency, user_dependency
-from models.account import Account
-from schemas.account import AccountBase
+from models.account import Account, Transaction
+from schemas.account import AccountBase, AccountCreateBase
 
 accountRouter = APIRouter()
 
@@ -22,11 +22,16 @@ async def get_account_by_number(user:user_dependency, account_number:int, db: db
     return AccountBase(account_number=account.account_number, balance=account.balance)
 
 @accountRouter.post("/accounts")
-async def create_account(user:user_dependency, db: db_dependency, balance: int = 0) -> AccountBase:
-    print(user.get('id'))
+async def create_account(user:user_dependency, db: db_dependency, account: AccountCreateBase) -> AccountBase:
     random_number_account = random.randint(1000000000, 9999999999)
-    new_account = Account(account_number=random_number_account, balance=balance, user=user.get('id'))
+    new_account = Account(account_number=random_number_account, balance=account.balance, user=user.get('id'))
     db.add(new_account)
     db.commit()
     db.refresh(new_account)
+    if account.balance > 0:
+        transaction = Transaction(type='deposit', account_id=new_account.id, amount=new_account.balance)
+        db.add(transaction)
+        db.commit()
+        db.refresh(transaction)
+        
     return AccountBase(account_number=new_account.account_number, balance=new_account.balance)
