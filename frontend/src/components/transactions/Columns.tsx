@@ -2,43 +2,28 @@ import { ColumnDef } from "@tanstack/react-table"
 export type Transaction = {
   id: string
   amount: number
+  created_at: string
   type: "withdraw" | "deposit"
 }
-
-// export const transaction: Payment[] = [
-//   {
-//     id: "728ed52f",
-//     amount: 100,
-//     type: "withdraw",
-//   },
-//   {
-//     id: "489e1d42",
-//     amount: 125,
-//     type: "deposit",
-//   },
-// ]
 
 export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "id",
     header: () => <div className="text-left">Id</div>,
   },
-  //   {
-  //     accessorKey: "type",
-  //     header: () => <div className="">Tipo de transaccion</div>,
-  //     cell: ({ row }) => {
-  //       const type = row.getValue("type")
-
-  //       if (type === "withdraw") {
-  //         return <div className="font-medium">Retiro</div>
-  //       }
-  //       return <div className="font-medium">Deposito</div>
-  //       //   return <div className="font-medium">{type}</div>
-  //     },
-  //   },
+  {
+    accessorKey: "created_at",
+    header: () => <div className="">Fecha</div>,
+    cell: ({ row }) => {
+      const date: string = row.getValue("created_at")
+      return (
+        <div className="font-medium">{new Date(date).toLocaleString()}</div>
+      )
+    },
+  },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <div className="text-right">Cantidad</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"))
       const formatted = new Intl.NumberFormat("en-US", {

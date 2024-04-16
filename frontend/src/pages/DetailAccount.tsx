@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import CardAccount from "./CardAccount"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { CreateTransactionForm } from "../transactions/CreateTransaction"
-import { DataTable } from "../transactions/DataTable"
-import { Transaction, columns } from "../transactions/Columns"
+import { Link, useParams } from "react-router-dom"
+import CardAccount from "../components/account/CardAccount"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { CreateTransactionForm } from "../components/transactions/CreateTransaction"
+import { DataTable } from "../components/transactions/DataTable"
+import { Transaction, columns } from "../components/transactions/Columns"
+import { Button } from "@/components/ui/button"
 
 export function DetailAccount() {
   const { accountNumber } = useParams<{ accountNumber: string }>()
@@ -66,12 +67,22 @@ export function DetailAccount() {
         Detalle de la cuenta de ahorros
       </h1>
       <div className="grid my-8 gap-4">
-        <div className="flex justify-end space-x-2">
-          <CreateTransactionForm type="deposit" accountNumber={accountNumber} />
-          <CreateTransactionForm
-            type="withdraw"
-            accountNumber={accountNumber}
-          />
+        <div className="flex">
+          <div className="flex-1">
+            <Link to="/accounts" className="text-blue-500">
+              <Button variant="link">Volver</Button>
+            </Link>
+          </div>
+          <div className="flex-none space-x-2">
+            <CreateTransactionForm
+              type="deposit"
+              accountNumber={accountNumber}
+            />
+            <CreateTransactionForm
+              type="withdraw"
+              accountNumber={accountNumber}
+            />
+          </div>
         </div>
       </div>
       <div className="flex justify-center w-full space-x-4">

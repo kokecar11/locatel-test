@@ -21,11 +21,10 @@ export default function CardAccount({
           <CardTitle className="text-sm font-light">
             No. {accountNumber}
           </CardTitle>
-          {/* <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">${balance}</div>
-          <p className="text-xs text-muted-foreground">Disponible</p>
+          <p className="text-xs text-muted-foreground">Saldo Disponible</p>
         </CardContent>
       </Card>
     </Link>

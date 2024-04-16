@@ -58,20 +58,3 @@ export function Dashboard() {
     </div>
   )
 }
-
-{
-  /* <div className="w-1/2">
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-semibold">Cuentas</h2>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                <div className="flex justify-center">
-                  <Button className="w-1/2">Crear cuenta</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div> */
-}

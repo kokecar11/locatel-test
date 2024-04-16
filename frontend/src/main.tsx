@@ -4,11 +4,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { LoginForm } from "./pages/Login"
 import { SignUpForm } from "./pages/SignUp"
 import { Dashboard } from "./pages/Dashboard"
+import { DetailAccount } from "./pages/DetailAccount"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { PublicOnlyRoute } from "./components/PublicRoute"
-import "./globals.css"
-import { DetailAccount } from "./components/account/DetailAccount"
 import { Toaster } from "./components/ui/toaster"
+import "./globals.css"
 
 const router = createBrowserRouter([
   {
