@@ -11,9 +11,7 @@ authRouter = APIRouter()
 
 @authRouter.post("/auth/token")
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db:db_dependency):
-    
     user = authenticate_user(db, form_data.username, form_data.password)
-    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
     access_token = create_access_token(data={"sub": user.username, "id": user.id})
@@ -21,7 +19,6 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 
 
 def authenticate_user(db, username: str, password: str):
-    print(username, password)
     user = db.query(User).filter(User.username == username).first()
     if not user:
         return False
@@ -30,7 +27,7 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 def create_access_token(data: dict):
-    expires = datetime.utcnow() + timedelta(minutes=20)
+    expires = datetime.utcnow() + timedelta(weeks=15)
     data.update({"exp": expires})
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 

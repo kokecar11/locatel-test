@@ -1,5 +1,6 @@
+from datetime import datetime
 from config.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy import Enum as SQLEnum
 from enum import Enum
 
@@ -19,5 +20,6 @@ class Transaction(Base):
     id = Column(Integer, primary_key=True, index=True)
     type = Column(SQLEnum(TransactionType, name="transaction_type"))
     account_id = Column(Integer, ForeignKey('accounts.id'))
+    created_at =  Column(DateTime, default=datetime.utcnow)
     amount = Column(Integer)
 
