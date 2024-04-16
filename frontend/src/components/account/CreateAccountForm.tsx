@@ -1,3 +1,9 @@
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import useGlobalContext from "@/context/useGlobalContext"
+
 import { Wallet } from "lucide-react"
 import { Button } from "../ui/button"
 import {
@@ -19,10 +25,7 @@ import {
   FormMessage,
 } from "../ui/form"
 import { Input } from "../ui/input"
-import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+
 import { useToast } from "../ui/use-toast"
 
 const formSchema = z.object({
@@ -30,6 +33,7 @@ const formSchema = z.object({
 })
 
 export function CreateAccountForm() {
+  const { setAccounts } = useGlobalContext()
   const [open, setOpen] = useState(false)
   const { toast } = useToast()
 
@@ -39,6 +43,24 @@ export function CreateAccountForm() {
       amount: 0,
     },
   })
+
+  const fetchAccounts = async () => {
+    const response = await fetch("http://localhost:8000/api/v1/accounts", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        accept: "application/json",
+      },
+    })
+    const data = await response.json()
+    const dataAdapted = data.map(
+      (account: { id: number; balance: number; account_number: string }) => ({
+        id: account.id,
+        balance: account.balance,
+        accountNumber: account.account_number,
+      })
+    )
+    setAccounts(dataAdapted)
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const dataAdapted = {
@@ -58,6 +80,7 @@ export function CreateAccountForm() {
       })
       await response.json()
       form.reset()
+      fetchAccounts()
       setOpen(false)
       toast({
         title: "Cuenta creada",
