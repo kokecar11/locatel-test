@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import useGlobalContext from "@/context/useGlobalContext"
 import CardAccount from "@/components/account/CardAccount"
 import { CreateAccountForm } from "@/components/account/CreateAccountForm"
+import { Button } from "@/components/ui/button"
 
 export function Dashboard() {
   const { accounts, setAccounts } = useGlobalContext()
@@ -41,8 +42,19 @@ export function Dashboard() {
       <h1 className="text-4xl text-center mt-10 font-bold">
         Mis cuentas de ahorro
       </h1>
-      <div className="flex w-full my-8">
+      <div className="flex w-full my-8 space-x-2">
         <CreateAccountForm />
+        <div className="flex-none">
+          <Button
+            variant={"destructive"}
+            onClick={() => {
+              localStorage.removeItem("access_token")
+              window.location.href = "/"
+            }}
+          >
+            Cerrar sesion
+          </Button>
+        </div>
       </div>
       <div className="grid grid-cols-4 gap-4">
         {accounts.map((account) => (

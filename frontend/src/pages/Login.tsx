@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useToast } from "@/components/ui/use-toast"
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -34,6 +35,7 @@ export function LoginForm() {
     },
   })
 
+  const { toast } = useToast()
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new URLSearchParams()
     formData.append("username", values.username)
@@ -48,6 +50,13 @@ export function LoginForm() {
       })
 
       const data = await response.json()
+      if (!response.ok) {
+        toast({
+          title: "Error",
+          description: data.detail,
+        })
+        throw new Error(data.detail)
+      }
       localStorage.setItem("access_token", data.access_token)
       form.reset()
       window.location.href = "/accounts"
